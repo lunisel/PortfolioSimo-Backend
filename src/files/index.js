@@ -4,9 +4,9 @@ import { v2 as cloudinary } from "cloudinary";
 import bodyParser from "body-parser";
 
 cloudinary.config({
-  cloud_name: "lunisel",
-  api_key: "679366839372538",
-  api_secret: "Mt3IyheCu-S1sjQUPbRye_GjbFA",
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API,
+  api_secret: process.env.CLOUDINARY_SECRET,
 });
 
 const fileRouter = express.Router();
