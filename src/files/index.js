@@ -18,7 +18,14 @@ fileRouter.use(bodyParser.urlencoded({ extended: true }));
 
 fileRouter.get("/", async (req, resp, next) => {
   try {
-    const allFiles = await FileModel.find({});
+    const seenIds = [];
+    const allFiles = await FileModel.aggregate(
+      [{ $sample: { size: 9 } }],
+      [{ $match: { _id: { $nin: seenIds } } }]
+    );
+    for (let i = 0; i < 9; i++) {
+      seenIds.push(allFiles[i]._id);
+    }
     console.log("🔸ALL FILES FETCHED🙌");
     resp.send(allFiles);
   } catch (err) {
