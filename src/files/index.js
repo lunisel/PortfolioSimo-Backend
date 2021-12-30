@@ -16,11 +16,70 @@ fileRouter.use(bodyParser.urlencoded({ extended: true }));
 
 /* GET ALL FILES */
 
-fileRouter.get("/", async (req, resp, next) => {
+fileRouter.post("/", async (req, resp, next) => {
   try {
-    const allFiles = await FileModel.find({});
-    console.log("🔸ALL FILES FETCHED🙌");
-    resp.send(allFiles);
+    let seenIds = req.body.seenIds;
+    if (seenIds === null) {
+      let allFilesIds = [];
+      const allFiles = await FileModel.find({});
+      const allFilesLength = allFiles.length;
+      const nineFiles = await FileModel.aggregate([{ $sample: { size: 9 } }]);
+      for (let i = 0; i < allFilesLength; i++) {
+        let id = allFiles[i]._id;
+        allFilesIds.push(id);
+      }
+      console.log("🔸NINE FILES FETCHED🙌");
+      resp.send({ allFilesLength, nineFiles, allFilesIds });
+    } else {
+      let allFilesIds = [];
+      const allFiles = await FileModel.find({});
+      const allFilesLength = allFiles.length;
+      if (seenIds.length === 36) {
+        const eightFiles = [];
+        for (let i = 0; i < allFilesLength; i++) {
+          let file = await FileModel.aggregate([{ $sample: { size: 1 } }]);
+          let indexSeenIds = seenIds.indexOf(file[0]._id.toString());
+          let indexeightFiles = eightFiles.indexOf(file[0]._id.toString());
+          if (indexSeenIds === -1 && indexeightFiles === -1) {
+            let id = file[0]._id.toString();
+            let singleFile = await FileModel.findById(id);
+            eightFiles.push(singleFile);
+          } else {
+            console.log("ERROR", file[0]._id.toString());
+          }
+          if (eightFiles.length === 8) {
+            for (let i = 0; i < allFilesLength; i++) {
+              let id = allFiles[i]._id;
+              allFilesIds.push(id);
+            }
+            console.log("🔸ALL FILES FETCHED🙌");
+            resp.send({ allFilesLength, eightFiles, allFilesIds });
+          }
+        }
+      } else {
+        const nineFiles = [];
+        for (let i = 0; i < allFilesLength; i++) {
+          let file = await FileModel.aggregate([{ $sample: { size: 1 } }]);
+          let indexSeenIds = seenIds.indexOf(file[0]._id.toString());
+          let indexnineFiles = nineFiles.indexOf(file[0]._id.toString());
+          if (indexSeenIds === -1 && indexnineFiles === -1) {
+            let id = file[0]._id.toString();
+            let singleFile = await FileModel.findById(id);
+            nineFiles.push(singleFile);
+          } else {
+            console.log("ERROR", file[0]._id.toString());
+          }
+          if (nineFiles.length === 9) {
+            for (let i = 0; i < allFilesLength; i++) {
+              let id = allFiles[i]._id;
+              allFilesIds.push(id);
+            }
+            console.log("🔸ALL FILES FETCHED🙌");
+            resp.send({ allFilesLength, nineFiles, allFilesIds });
+          }
+        }
+      }
+    }
   } catch (err) {
     console.log(err);
     next(err);
