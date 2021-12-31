@@ -52,7 +52,7 @@ fileRouter.post("/", async (req, resp, next) => {
               let id = allFiles[i]._id;
               allFilesIds.push(id);
             }
-            console.log("🔸ALL FILES FETCHED🙌");
+            console.log("🔸EIGHT FILES FETCHED🙌");
             resp.send({ allFilesLength, eightFiles, allFilesIds });
           }
         }
@@ -74,8 +74,9 @@ fileRouter.post("/", async (req, resp, next) => {
               let id = allFiles[i]._id;
               allFilesIds.push(id);
             }
-            console.log("🔸ALL FILES FETCHED🙌");
+            console.log("🔸NINE FILES FETCHED🙌");
             resp.send({ allFilesLength, nineFiles, allFilesIds });
+            return;
           }
         }
       }
